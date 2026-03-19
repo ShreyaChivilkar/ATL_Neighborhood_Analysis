@@ -112,7 +112,7 @@ with open(CACHE_FILE, "a", newline="", encoding="utf-8") as f:
             safe_addr = addr.replace('"', '""')  # CSV-safe
             f.write(f'"{safe_addr}",{lat},{lng},{ok}\n')
             f.flush()
-
+            #finetune time to make API calls
             time.sleep(0.05)
 
         except Exception as e:
