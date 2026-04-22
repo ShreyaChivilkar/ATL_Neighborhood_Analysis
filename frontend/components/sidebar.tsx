@@ -96,25 +96,75 @@ export default function Sidebar({ selectedRegion, topBest, topWorst }: SidebarPr
 
             <hr style={{ margin: "20px 0" }} />
 
-            {/* Worst */}
-            <h4>🔥 Worst Regions</h4>
-            <ul style={{ fontSize: "14px" }}>
-                {topWorst.map((r, i) => (
-                    <li key={i}>
-                        {r.name} — {r.final_score?.toFixed(1)}
-                    </li>
-                ))}
-            </ul>
+            <div style={{
+                display: "flex",
+                gap: "24px",
+                marginTop: "20px"
+            }}>
 
-            {/* Best */}
-            <h4 style={{ marginTop: "15px" }}>🌿 Best Regions</h4>
-            <ul style={{ fontSize: "14px" }}>
-                {topBest.map((r, i) => (
-                    <li key={i}>
-                        {r.name} — {r.final_score?.toFixed(1)}
-                    </li>
-                ))}
-            </ul>
+                {/* LEFT — BEST */}
+                <div style={{ flex: 1 }}>
+                    <h4 style={{
+                        marginBottom: "10px",
+                        fontWeight: "600",
+                        color: "#16a34a"
+                    }}>
+                        🌿 Best Regions
+                    </h4>
+
+                    <ul style={{ listStyle: "none", padding: 0 }}>
+                        {topBest.map((r, i) => (
+                            <li
+                                key={i}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    padding: "6px 0",
+                                    borderBottom: "1px solid #e5e7eb",
+                                    fontSize: "14px"
+                                }}
+                            >
+                                <span>{r.name}</span>
+                                <span style={{ fontWeight: "600" }}>
+                                    {r.final_score.toFixed(1)}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                {/* RIGHT — WORST */}
+                <div style={{ flex: 1 }}>
+                    <h4 style={{
+                        marginBottom: "10px",
+                        fontWeight: "600",
+                        color: "#dc2626"
+                    }}>
+                        🔥 Worst Regions
+                    </h4>
+
+                    <ul style={{ listStyle: "none", padding: 0 }}>
+                        {topWorst.map((r, i) => (
+                            <li
+                                key={i}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    padding: "6px 0",
+                                    borderBottom: "1px solid #e5e7eb",
+                                    fontSize: "14px"
+                                }}
+                            >
+                                <span>{r.name}</span>
+                                <span style={{ fontWeight: "600" }}>
+                                    {r.final_score.toFixed(1)}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+            </div>
         </div>
     );
 }
