@@ -142,6 +142,7 @@ export default function Home() {
             selectedRegion={selectedRegion}
             topBest={topBest}
             topWorst={topWorst}
+            year={year}
           />
         </div>
 
