@@ -28,55 +28,103 @@ export default function Home() {
   }, [year]);
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div style={{
+      height: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      background: "#020617"
+    }}>
+
       {/* HEADER */}
-      <div style={{ padding: "20px" }}>
-        <h1>311 Neighborhood Dashboard</h1>
-        <div style={{ marginTop: "10px" }}>
-          <span style={{ marginRight: "10px", fontWeight: "500" }}>
-            Select Year:
-          </span>
-          <select
-            value={year}
-            onChange={(e) => setYear(Number(e.target.value))}
-            style={{
-              marginTop: "10px",
-              padding: "8px 12px",
-              borderRadius: "8px",
-              border: "1px solid #ccc",
-              fontSize: "14px",
-              cursor: "pointer",
-              backgroundColor: "#ffffff",  // ✅ force white
-              color: "#000000"             // ✅ force black text
-            }}
-          >
-            <option value={2021} style={{ color: "black", backgroundColor: "white" }}>2021</option>
-            <option value={2022} style={{ color: "black", backgroundColor: "white" }}>2022</option>
-            <option value={2023} style={{ color: "black", backgroundColor: "white" }}>2023</option>
-            <option value={2024} style={{ color: "black", backgroundColor: "white" }}>2024</option>
-          </select>
+      <div style={{
+        padding: "16px 30px",
+        background: "linear-gradient(135deg, #0f172a, #020617)",
+        borderBottom: "1px solid #1e293b"
+      }}>
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center"
+        }}>
+
+          {/* LEFT */}
+          <div>
+            <h1 style={{
+              fontSize: "22px",
+              fontWeight: "600",
+              color: "#f8fafc"
+            }}>
+              Atlanta Neighborhood Analysis
+            </h1>
+
+            <p style={{
+              color: "#94a3b8",
+              fontSize: "12px"
+            }}>
+              311-based livability analysis · 5-year block-level data
+            </p>
+          </div>
+
+          {/* RIGHT */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "20px"
+          }}>
+            <div style={{ display: "flex", gap: "10px" }}>
+              {["Overview", "Methodology", "About"].map((tab) => (
+                <button
+                  key={tab}
+                  style={{
+                    padding: "5px 12px",
+                    borderRadius: "16px",
+                    border: "1px solid #334155",
+                    background: tab === "Overview" ? "#1e293b" : "transparent",
+                    color: "#e2e8f0",
+                    fontSize: "12px"
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            <select
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+              style={{
+                padding: "5px 10px",
+                borderRadius: "6px",
+                background: "#020617",
+                color: "#f8fafc",
+                border: "1px solid #334155"
+              }}
+            >
+              <option value={2021}>2021</option>
+              <option value={2022}>2022</option>
+              <option value={2023}>2023</option>
+              <option value={2024}>2024</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
       {/* MAIN CONTENT */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          gap: "20px",
-          padding: "0 20px 20px 20px",
-          overflow: "hidden",
-        }}
-      >
-        {/* 
-         */}
-        <div style={{ flex: 2 }}>
+      <div style={{
+        flex: 1,
+        display: "flex",
+        gap: "20px",
+        padding: "20px 30px",
+        overflow: "hidden"
+      }}>
+
+        {/* MAP */}
+        <div style={{
+          flex: 2,
+          height: "100%",
+          minWidth: 0
+        }}>
           <Map
             geoData={geoData}
             year={year}
@@ -85,11 +133,18 @@ export default function Home() {
         </div>
 
         {/* SIDEBAR */}
-        <Sidebar
-          selectedRegion={selectedRegion}
-          topBest={topBest}
-          topWorst={topWorst}
-        />
+        <div style={{
+          flex: 1,
+          height: "100%",
+          overflow: "auto"
+        }}>
+          <Sidebar
+            selectedRegion={selectedRegion}
+            topBest={topBest}
+            topWorst={topWorst}
+          />
+        </div>
+
       </div>
     </div>
   );
