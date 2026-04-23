@@ -53,6 +53,15 @@ def test_data():
 # ----------------------------
 @app.get("/region")
 def get_region(geoid: str, year: int):
+
+    #  Get name from CSV
+    row = bg_df[bg_df["GEOID"] == geoid]
+
+    if not row.empty and pd.notna(row.iloc[0]["neighborhood_name"]):
+        display_name = row.iloc[0]["neighborhood_name"]
+    else:
+        display_name = f"BG {geoid[-6:]}"
+
     file_path = os.path.join(DATA_PATH, f"map_{year}.geojson")
 
     with open(file_path) as f:
@@ -79,6 +88,7 @@ def get_region(geoid: str, year: int):
 
             props["top_issues"] = top_issues
             props["top_domains"] = top_domains
+            props["display_name"] = display_name
 
             return props
 

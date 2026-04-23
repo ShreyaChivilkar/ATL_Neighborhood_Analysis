@@ -12,6 +12,26 @@ type SidebarProps = {
 
 export default function Sidebar({ selectedRegion, topBest, topWorst, year }: SidebarProps) {
     const [showRegions, setShowRegions] = useState(false);
+    const [showBreakdown, setShowBreakdown] = useState(true);
+
+    const cardStyle = {
+        padding: "10px",
+        borderRadius: "10px",
+        background: "#ffffff",
+        border: "1px solid #e5e7eb"
+    };
+
+    const labelStyle = {
+        fontSize: "11px",
+        color: "#6b7280"
+    };
+
+    const valueStyle = {
+        fontSize: "16px",
+        fontWeight: "600",
+        color: "#111827"
+    };
+
 
     return (
         <div
@@ -26,21 +46,104 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
                 color: "#111827"   // 🔥 FIX: strong text color
             }}
         >
-            {/* Selected Region */}
-            <h3 style={{ marginBottom: "10px", color: "#111827" }}>
-                Selected Region
-            </h3>
+            <div style={{
+                marginBottom: "20px",
+                borderRadius: "14px",
+                border: "1px solid #e5e7eb",
+                background: "#f8fafc",
+                padding: "16px"
+            }}>
 
-            {selectedRegion ? (
-                <div style={{ lineHeight: "1.8", color: "#374151" }}>
-                    <p><strong>Final Score:</strong> {selectedRegion.final_score?.toFixed(2)}</p>
-                    <p><strong>Complaints:</strong> {selectedRegion.complaints_per_1000?.toFixed(2)}</p>
-                    <p><strong>Severity:</strong> {selectedRegion.avg_severity?.toFixed(2)}</p>
-                    <p><strong>Resolution:</strong> {selectedRegion.avg_resolution_score?.toFixed(2)}</p>
-                </div>
-            ) : (
-                <p style={{ color: "#6b7280" }}>Click a region on the map</p>
-            )}
+                {!selectedRegion ? (
+                    // 🔹 EMPTY STATE
+                    <div style={{
+                        textAlign: "center",
+                        padding: "20px 12px",
+                        borderRadius: "10px",
+                        background: "#f9fafb",
+                        border: "1px dashed #e5e7eb"
+                    }}>
+                        <p style={{
+                            fontSize: "13px",
+                            color: "#6b7280",
+                            marginBottom: "4px"
+                        }}>
+                            No region selected
+                        </p>
+
+                        <p style={{
+                            fontSize: "12px",
+                            color: "#9ca3af"
+                        }}>
+                            Click a region on the map to explore details
+                        </p>
+                    </div>
+
+                ) : (
+                    // 🔹 SELECTED STATE
+                    <>
+                        {/* HEADER */}
+                        <div style={{ marginBottom: "12px" }}>
+                            <p style={{
+                                fontSize: "12px",
+                                color: "#6b7280",
+                                marginBottom: "4px"
+                            }}>
+                                Selected Region
+                            </p>
+
+                            <h2 style={{
+                                fontSize: "18px",
+                                fontWeight: "600",
+                                color: "#111827"
+                            }}>
+                                {selectedRegion.display_name}
+                            </h2>
+                        </div>
+
+                        {/* METRICS */}
+                        <div style={{
+                            display: "grid",
+                            gridTemplateColumns: "1fr 1fr",
+                            gap: "10px"
+                        }}>
+
+                            {/* Score */}
+                            <div style={cardStyle}>
+                                <p style={labelStyle}>Score</p>
+                                <p style={valueStyle}>
+                                    {selectedRegion.final_score?.toFixed(1)}
+                                </p>
+                            </div>
+
+                            {/* Complaints */}
+                            <div style={cardStyle}>
+                                <p style={labelStyle}>Requests</p>
+                                <p style={valueStyle}>
+                                    {selectedRegion.complaints_per_1000?.toFixed(1)}
+                                </p>
+                            </div>
+
+                            {/* Severity */}
+                            <div style={cardStyle}>
+                                <p style={labelStyle}>Severity</p>
+                                <p style={valueStyle}>
+                                    {selectedRegion.avg_severity?.toFixed(1)}
+                                </p>
+                            </div>
+
+                            {/* Resolution */}
+                            <div style={cardStyle}>
+                                <p style={labelStyle}>Resolution</p>
+                                <p style={valueStyle}>
+                                    {selectedRegion.avg_resolution_score?.toFixed(2)}
+                                </p>
+                            </div>
+
+                        </div>
+                    </>
+                )}
+            </div>
 
             {selectedRegion && (
                 <>
@@ -52,50 +155,213 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
                         alignItems: "flex-start"
                     }}>
 
-                        {/* DOMAINS */}
-                        <div style={{ flex: 1 }}>
-                            <h4 style={{ marginBottom: "10px", fontWeight: "600" }}>
-                                🔥 Domains
-                            </h4>
 
-                            <ul style={{ listStyle: "none", padding: 0 }}>
-                                {selectedRegion.top_domains?.map((item: any, i: number) => (
-                                    <li key={i} style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        padding: "8px 0",
-                                        borderBottom: "1px solid #e5e7eb"
+                        <div style={{
+                            marginTop: "20px",
+                            borderRadius: "14px",
+                            border: "1px solid #e5e7eb",
+                            background: "#f8fafc",
+                            overflow: "hidden"
+                        }}>
+
+                            {/* HEADER */}
+                            <div
+                                onClick={() => setShowBreakdown(!showBreakdown)}
+                                style={{
+                                    padding: "14px 16px",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
+                                }}
+                            >
+                                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                                    <span style={{
+                                        fontWeight: "600",
+                                        fontSize: "15px",
+                                        color: "#111827"
                                     }}>
-                                        <span>{item.domain}</span>
-                                        <span style={{ color: "#2563eb", fontWeight: "600" }}>
-                                            {item.count}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                                        Service Breakdown
+                                    </span>
 
-                        {/* ISSUES */}
-                        <div style={{ flex: 1 }}>
-                            <h4 style={{ marginBottom: "10px", fontWeight: "600" }}>
-                                ⚠️ Issues
-                            </h4>
-
-                            <ul style={{ listStyle: "none", padding: 0 }}>
-                                {selectedRegion.top_issues?.map((item: any, i: number) => (
-                                    <li key={i} style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        padding: "8px 0",
-                                        borderBottom: "1px solid #e5e7eb"
+                                    <span style={{
+                                        fontSize: "12px",
+                                        color: "#6b7280",
+                                        fontStyle: "italic"
                                     }}>
-                                        <span>{item.issue}</span>
-                                        <span style={{ color: "#dc2626", fontWeight: "600" }}>
-                                            {item.count}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
+                                        Top Issues & Domains
+                                    </span>
+                                </div>
+
+                                <span style={{ fontSize: "12px", color: "#6b7280" }}>
+                                    {showBreakdown ? "▲" : "▼"}
+                                </span>
+                            </div>
+
+                            {/* CONTENT */}
+                            {showBreakdown && (
+                                <div style={{
+                                    padding: "16px",
+                                    borderTop: "1px solid #e5e7eb"
+                                }}>
+
+                                    {!selectedRegion && (
+                                        <p style={{ color: "#9ca3af", fontSize: "13px" }}>
+                                            Click a region to see breakdown
+                                        </p>
+                                    )}
+
+                                    {selectedRegion && (
+                                        <div style={{ display: "flex", gap: "32px" }}>
+
+                                            {/* DOMAINS */}
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: "13px",
+                                                    fontWeight: "600",
+                                                    color: "#475569",
+                                                    marginBottom: "8px"
+                                                }}>
+                                                    Domains
+                                                </div>
+
+                                                {/* HEADER */}
+                                                <div style={{
+                                                    display: "grid",
+                                                    gridTemplateColumns: "1fr 50px",
+                                                    marginBottom: "8px",
+                                                    paddingBottom: "4px",
+                                                    borderBottom: "1px solid #e5e7eb"
+                                                }}>
+                                                    <span style={{
+                                                        fontSize: "12px",
+                                                        fontWeight: "600",
+                                                        color: "#94a3b8"
+                                                    }}>
+                                                        Domain
+                                                    </span>
+
+                                                    <span style={{
+                                                        textAlign: "right",
+                                                        fontSize: "12px",
+                                                        fontWeight: "600",
+                                                        color: "#94a3b8"
+                                                    }}>
+                                                        Requests
+                                                    </span>
+                                                </div>
+
+                                                {selectedRegion.top_domains?.map((d: any, i: number) => (
+                                                    <div
+                                                        key={i}
+                                                        onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"}
+                                                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                                                        style={{
+                                                            display: "grid",
+                                                            gridTemplateColumns: "1fr 50px",
+                                                            alignItems: "center",
+                                                            padding: "10px 8px",
+                                                            borderBottom: "1px solid #f1f5f9",
+                                                            borderRadius: "6px",
+                                                            transition: "background 0.2s ease"
+                                                        }}
+                                                    >
+                                                        <span style={{
+                                                            fontWeight: "500",
+                                                            fontSize: "13.5px",
+                                                            color: "#1f2937"
+                                                        }}>
+                                                            {d.domain}
+                                                        </span>
+
+                                                        <span style={{
+                                                            textAlign: "right",
+                                                            fontWeight: "700",
+                                                            fontSize: "13.5px",
+                                                            color: "#2563eb"
+                                                        }}>
+                                                            {d.count}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {/* ISSUES */}
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{
+                                                    fontSize: "13px",
+                                                    fontWeight: "600",
+                                                    color: "#475569",
+                                                    marginBottom: "8px"
+                                                }}>
+                                                    Issues
+                                                </div>
+
+                                                {/* HEADER */}
+                                                <div style={{
+                                                    display: "grid",
+                                                    gridTemplateColumns: "1fr 50px",
+                                                    marginBottom: "8px",
+                                                    paddingBottom: "4px",
+                                                    borderBottom: "1px solid #e5e7eb"
+                                                }}>
+                                                    <span style={{
+                                                        fontSize: "12px",
+                                                        fontWeight: "600",
+                                                        color: "#94a3b8"
+                                                    }}>
+                                                        Issue
+                                                    </span>
+
+                                                    <span style={{
+                                                        textAlign: "right",
+                                                        fontSize: "12px",
+                                                        fontWeight: "600",
+                                                        color: "#94a3b8"
+                                                    }}>
+                                                        Requests
+                                                    </span>
+                                                </div>
+
+                                                {selectedRegion.top_issues?.map((d: any, i: number) => (
+                                                    <div
+                                                        key={i}
+                                                        onMouseEnter={(e) => e.currentTarget.style.background = "#f1f5f9"}
+                                                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                                                        style={{
+                                                            display: "grid",
+                                                            gridTemplateColumns: "1fr 50px",
+                                                            alignItems: "center",
+                                                            padding: "10px 8px",
+                                                            borderBottom: "1px solid #f1f5f9",
+                                                            borderRadius: "6px",
+                                                            transition: "background 0.2s ease"
+                                                        }}
+                                                    >
+                                                        <span style={{
+                                                            fontWeight: "500",
+                                                            fontSize: "13.5px",
+                                                            color: "#1f2937"
+                                                        }}>
+                                                            {d.issue}
+                                                        </span>
+
+                                                        <span style={{
+                                                            textAlign: "right",
+                                                            fontWeight: "700",
+                                                            fontSize: "13.5px",
+                                                            color: "#2563eb"
+                                                        }}>
+                                                            {d.count}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                     </div>
