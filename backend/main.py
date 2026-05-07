@@ -124,6 +124,33 @@ def get_highlights(year: int):
     }
 
 # ----------------------------
+# TIMESERIES (multi-year for one region)
+# ----------------------------
+@app.get("/region/timeseries")
+def get_region_timeseries(geoid: str):
+    years = [2021, 2022, 2023, 2024, 2025]
+    result = []
+
+    for year in years:
+        fp = os.path.join(DATA_PATH, f"map_{year}.geojson")
+        with open(fp) as f:
+            data = json.load(f)
+
+        for feature in data["features"]:
+            props = feature["properties"]
+            if props["GEOID"] == geoid:
+                result.append({
+                    "year": year,
+                    "final_score":          props.get("final_score"),
+                    "complaints_per_1000":  props.get("complaints_per_1000"),
+                    "avg_severity":         props.get("avg_severity"),
+                    "avg_resolution_score": props.get("avg_resolution_score"),
+                })
+                break
+
+    return result
+
+# ----------------------------
 # OPTIONAL (can keep for debug)
 # ----------------------------
 @app.get("/geo-names")

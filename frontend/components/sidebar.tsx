@@ -1,18 +1,19 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
+import TrendChart from "./TrendChart";
 
 type SidebarProps = {
     selectedRegion: any;
     topBest: any[];
     topWorst: any[];
-    year: number;   // ✅ ADD THIS
-
+    year: number;
+    trendData: any[];
 };
 
 
-export default function Sidebar({ selectedRegion, topBest, topWorst, year }: SidebarProps) {
+export default function Sidebar({ selectedRegion, topBest, topWorst, year, trendData }: SidebarProps) {
     const [showRegions, setShowRegions] = useState(false);
     const [showBreakdown, setShowBreakdown] = useState(true);
+    const [showTrends, setShowTrends] = useState(false);
 
     const cardStyle = {
         padding: "10px",
@@ -22,14 +23,71 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
     };
 
     const labelStyle = {
-        fontSize: "11px",
-        color: "#6b7280"
+        fontSize: "12px",
+        fontWeight: "600",
+        color: "#475569",
+        letterSpacing: "0.2px"
     };
 
     const valueStyle = {
         fontSize: "16px",
         fontWeight: "600",
         color: "#111827"
+    };
+
+    const LabelWithInfo = ({
+        label,
+        tooltip
+    }: {
+        label: React.ReactNode;
+        tooltip: string;
+    }) => {
+        const [show, setShow] = useState(false);
+
+        return (
+            <div style={{ position: "relative", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span style={labelStyle}>{label}</span>
+
+                <span
+                    onMouseEnter={() => setShow(true)}
+                    onMouseLeave={() => setShow(false)}
+                    style={{
+                        width: "16px",
+                        height: "16px",
+                        borderRadius: "50%",
+                        background: "#e2e8f0",
+                        color: "#475569",
+                        fontSize: "10px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer"
+                    }}
+                >
+                    i
+                </span>
+
+                {show && (
+                    <div style={{
+                        position: "absolute",
+                        top: "24px",
+                        left: "0",
+                        background: "#111827",
+                        color: "#ffffff",
+                        fontSize: "11px",
+                        padding: "6px 8px",
+                        borderRadius: "6px",
+                        width: "180px",
+                        lineHeight: "1.4",
+                        zIndex: 10,
+                        wordWrap: "break-word",
+                        boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
+                    }}>
+                        {tooltip}
+                    </div>
+                )}
+            </div>
+        );
     };
 
 
@@ -110,7 +168,14 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
 
                             {/* Score */}
                             <div style={cardStyle}>
-                                <p style={labelStyle}>Score</p>
+                                <LabelWithInfo
+                                    label={
+                                        <span style={{ color: "#4f46e5" }}>
+                                            Livability Score ⭐
+                                        </span>
+                                    }
+                                    tooltip="Composite score based on service demand, issue severity, and resolution efficiency"
+                                />
                                 <p style={valueStyle}>
                                     {selectedRegion.final_score?.toFixed(1)}
                                 </p>
@@ -118,7 +183,14 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
 
                             {/* Complaints */}
                             <div style={cardStyle}>
-                                <p style={labelStyle}>Requests</p>
+                                <LabelWithInfo
+                                    label={
+                                        <span style={{ color: "#2563eb" }}>
+                                            Service Demand
+                                        </span>
+                                    }
+                                    tooltip="Number of complaints per 1,000 residents in this area"
+                                />
                                 <p style={valueStyle}>
                                     {selectedRegion.complaints_per_1000?.toFixed(1)}
                                 </p>
@@ -126,7 +198,14 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
 
                             {/* Severity */}
                             <div style={cardStyle}>
-                                <p style={labelStyle}>Severity</p>
+                                <LabelWithInfo
+                                    label={
+                                        <span style={{ color: "#d97706" }}>
+                                            Issue Severity
+                                        </span>
+                                    }
+                                    tooltip="Weighted score based on issue type and domain impact"
+                                />
                                 <p style={valueStyle}>
                                     {selectedRegion.avg_severity?.toFixed(1)}
                                 </p>
@@ -134,7 +213,14 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
 
                             {/* Resolution */}
                             <div style={cardStyle}>
-                                <p style={labelStyle}>Resolution</p>
+                                <LabelWithInfo
+                                    label={
+                                        <span style={{ color: "#059669" }}>
+                                            Resolution Efficiency
+                                        </span>
+                                    }
+                                    tooltip="How quickly issues are resolved compared to expected resolution times"
+                                />
                                 <p style={valueStyle}>
                                     {selectedRegion.avg_resolution_score?.toFixed(2)}
                                 </p>
@@ -364,6 +450,47 @@ export default function Sidebar({ selectedRegion, topBest, topWorst, year }: Sid
                             )}
                         </div>
 
+                    </div>
+                </>
+            )}
+
+            {selectedRegion && trendData.length > 0 && (
+                <>
+                    <hr style={{ margin: "20px 0" }} />
+                    <div style={{
+                        borderRadius: "14px",
+                        border: "1px solid #e5e7eb",
+                        background: "#f8fafc",
+                        overflow: "hidden"
+                    }}>
+                        <div
+                            onClick={() => setShowTrends(!showTrends)}
+                            style={{
+                                padding: "14px 16px",
+                                cursor: "pointer",
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center"
+                            }}
+                        >
+                            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                                <span style={{ fontWeight: "600", fontSize: "15px", color: "#111827" }}>
+                                    Year-over-Year Trends
+                                </span>
+                                <span style={{ fontSize: "12px", color: "#6b7280", fontStyle: "italic" }}>
+                                    2021 – 2025
+                                </span>
+                            </div>
+                            <span style={{ fontSize: "12px", color: "#6b7280" }}>
+                                {showTrends ? "▲" : "▼"}
+                            </span>
+                        </div>
+
+                        {showTrends && (
+                            <div style={{ padding: "16px", borderTop: "1px solid #e5e7eb" }}>
+                                <TrendChart data={trendData} />
+                            </div>
+                        )}
                     </div>
                 </>
             )}

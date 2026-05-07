@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 
-export default function Map({ geoData, year, setSelectedRegion }) {
+export default function Map({ geoData, year, setSelectedRegion, mapInstanceRef }) {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
 
@@ -35,9 +35,11 @@ export default function Map({ geoData, year, setSelectedRegion }) {
       minZoom: 9,
       maxZoom: 14,
       scrollZoom: false,
+      preserveDrawingBuffer: true,
     });
 
     mapRef.current = map;
+    if (mapInstanceRef) mapInstanceRef.current = map;
 
     map.on("load", () => {
       map.addSource("blocks", {
